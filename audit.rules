@@ -1,3 +1,7 @@
+#Track the execution of any binary in the system with effective user (eudid) root
+-a exit,always -F arch=b64 -F euid=0 -S execve -k  audit-wazuh-c
+-a exit,always -F arch=b32 -F euid=0 -S execve -k  audit-wazuh-c
+
 #Monitors successful (wtmp) and failed (btmp) login attempts
 -w /var/log/wtmp -p wa -k user_login
 -w /var/log/btmp -p wa -k failed_login
