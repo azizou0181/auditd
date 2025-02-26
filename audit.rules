@@ -1,0 +1,34 @@
+#Monitors successful (wtmp) and failed (btmp) login attempts
+-w /var/log/wtmp -p wa -k user_login
+-w /var/log/btmp -p wa -k failed_login
+
+#Tracks modifications to sensitive user and group files.
+-w /etc/shadow -p wa -k shadow_changes
+-w /etc/group -p wa -k group_changes
+-w /etc/passwd -p wa -k passwd_monitor
+-w /etc/ssh/sshd_config -p wa -k ssh_config
+
+#Logs all command executions (execve syscall) for 32-bit and 64-bit architectures
+-a always,exit -F arch=b64 -S execve -k exec_monitor
+-a always,exit -F arch=b32 -S execve -k exec_monitor
+
+#Detects changes to file permissions, which can indicate privilege escalation attempts
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -k perm_change
+-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -k perm_change
+
+#Monitoring changes to system and network configurations
+-a always,exit -F arch=b64 -S setsockopt,setsockcreate -k network_changes 
+-a always,exit -F arch=b32 -S setsockopt,setsockcreate -k network_changes 
+
+#Detect outbound and inbound network activity
+-a always,exit -F arch=b64 -S socket -S connect -S accept -k network_monitor
+-a always,exit -F arch=b32 -S socket -S connect -S accept -k network_monitor
+
+#Ensure that auditing itself is not tampered with to maintain system security
+-w /etc/audit/ -p wa -k audit_config_change  
+-w /var/log/ -p wa -k log_access 
+
+## Successful ownership change
+-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F success=1 -F auid>=1000 -F auid!=unset -F key=successful-owner-change
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F success=1 -F auid>=1000 -F auid!=unset -F key=successful-owner-change
+
