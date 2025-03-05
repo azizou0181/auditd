@@ -21,8 +21,8 @@
 -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -k perm_change
 
 #Monitoring changes to system and network configurations
--a always,exit -F arch=b64 -S setsockopt,setsockcreate -k network_changes 
--a always,exit -F arch=b32 -S setsockopt,setsockcreate -k network_changes 
+#-a always,exit -F arch=b64 -S setsockopt,setsockcreate -k network_changes 
+#-a always,exit -F arch=b32 -S setsockopt,setsockcreate -k network_changes 
 
 #Detect outbound and inbound network activity
 -a always,exit -F arch=b64 -S socket -S connect -S accept -k network_monitor
